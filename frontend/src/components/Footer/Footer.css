@@ -1,0 +1,11 @@
+.footer{
+  width: 100%;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  height: 4rem;
+  opacity: .3;
+  position: fixed;
+  bottom: 0;
+  /* background: -webkit-linear-gradient(right, rgb(202, 202, 238), pink, rgb(139, 139, 245), rgb(135, 135, 240)); */
+}

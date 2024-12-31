@@ -1,0 +1,125 @@
+.home-outter{
+  position: relative;
+  min-height: 34.5rem;
+  /* background: linear-gradient(rgb(141, 141, 214), blue); */
+}
+
+
+
+
+.headerSearch {
+  position: absolute;
+  left: 10vw;
+  right: 10vw;
+  top: 10rem;
+  z-index: 20;
+  height: 45px;
+  background-color: white;
+  /* border: 1px solid #331804; */
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 10px 0px;
+  border-radius: 5px;
+  width: 100%;
+  margin: 20px auto;
+  max-width: 1024px;
+}
+
+.headerIcon {
+  color: rgb(202, 163, 163);
+}
+
+.headerSearchItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerSearchInput {
+  border: none;
+  outline: none;
+}
+
+.headerSearchText {
+  color: rgb(202, 163, 163);
+  cursor: pointer;
+}
+
+.date {
+  position: absolute;
+  top: 50px;
+  z-index: 2;
+}
+
+.options {
+  z-index: 2;
+  position: absolute;
+  top: 50px;
+  background-color: white;
+  color: gray;
+  border-radius: 5px;
+  -webkit-box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+}
+
+.optionItem {
+  width: 200px;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+}
+
+.optionCounter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: black;
+}
+
+.optionCounterButton {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #0071c2;
+  color: #0d9953;
+  cursor: pointer;
+  background-color: white;
+}
+
+.optionCounterButton:disabled {
+  cursor: not-allowed;
+}
+
+/* .headerSearch .btn-container{
+  width: auto;
+  background-color: yellow !important;
+} */
+
+.headerBtn{
+  position: absolute;
+  right: 0px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  width: 120px;
+  height: 45px;
+  background-color: #0d9953; 
+  color: white; 
+  border-radius: 0px 5px 5px 0px;
+  /* border: 1px solid black; */
+}
+
+.headerBtn:disabled{
+  background-color: #4ac387;
+  cursor: not-allowed;
+}
+
+.headerBtn:disabled:hover{
+  background-color: #4ac387;
+  cursor: not-allowed;
+}
+
+.headerBtn:hover{
+  background-color: #0b8246;
+}

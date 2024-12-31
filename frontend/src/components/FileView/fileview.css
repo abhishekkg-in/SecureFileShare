@@ -1,0 +1,8 @@
+.no-focus {
+    outline: none !important; 
+    -webkit-tap-highlight-color: transparent; 
+  }
+.no-focus:focus{
+    outline: none !important;
+    box-shadow: none !important; 
+}
