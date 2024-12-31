@@ -19,13 +19,23 @@ from SecureFileShareApp.models import Users, UserRole, ShareFile, SharedFileUser
 from SecureFileShareApp.serializers import UsersSerializer, UsersRoleSerializer, RolePermissionSerializer, FileMetadataSerializer, ShareFileSerializer, SharedFileUsersSerializer
 
 
-# Create your views here.
-
 @csrf_exempt
 def userAPI(request, id=0):
+    """
+    This view handles different HTTP methods for the Users model.
+
+    GET: Retrieves all user records and serializes them to JSON format.
+    POST: Retrieves a specific user's data based on the provided id and serializes it.
+    PUT: Updates a specific user's data with the provided data, handling the case where the user does not exist.
+    DELETE: Deletes a specific user based on the provided id.
+
+    Each method handles exceptions and returns appropriate JSON responses with status codes.
+    """
     if request.method == 'GET':
         try:
+            # Retrieve all user records
             users = Users.objects.all()
+            # Serialize user data
             users_serializer = UsersSerializer(users, many=True)
             res_data = {
                 "message": "users data fetched...",
@@ -33,6 +43,7 @@ def userAPI(request, id=0):
             }
             return JsonResponse(res_data, safe=False)
         except Exception as e:
+            # Handle any exceptions during the data fetch
             res_data = {
                 "message": "An error occurred fetching user data.",
                 "error": str(e) 
@@ -41,7 +52,9 @@ def userAPI(request, id=0):
 
     if request.method == 'POST':
         try:
+            # Retrieve user data based on the provided id
             user_data = Users.objects.get(pk=id)
+            # Serialize the retrieved user data
             user_serializer = UsersSerializer(instance=user_data)
             res_data = {
                 "message": "Users data fetched...",
@@ -49,6 +62,7 @@ def userAPI(request, id=0):
             }
             return JsonResponse(res_data, safe=False)
         except Users.DoesNotExist:
+            # Handle case where the user does not exist
             res_data = {
                 "message": "User not found",
                 "data": None
@@ -57,13 +71,17 @@ def userAPI(request, id=0):
         
     if request.method == 'PUT':
         try:
+            # Parse the incoming JSON request data
             data = JSONParser().parse(request)
+            # Set additional fields for the user data
             data['status'] = True
             data['created_at'] = datetime.now().isoformat()
             data['updated_at'] = datetime.now().isoformat()
             data['role_id'] = 1
 
+            # Retrieve existing user data based on the provided id
             user_data = Users.objects.get(pk=id)
+            # Update the existing user data with the new data
             serializer = UsersSerializer(user_data, data=data, partial=True)
             
             if serializer.is_valid():
@@ -76,6 +94,7 @@ def userAPI(request, id=0):
                 }
                 return JsonResponse(res_data, safe=False)
         except Users.DoesNotExist:
+            # Handle case where the user does not exist
             res_data = {
                 "message": "User not found",
                 "data": None
@@ -83,6 +102,7 @@ def userAPI(request, id=0):
             return JsonResponse(res_data, safe=False, status=404)
         
         except Exception as e:
+            # Handle any other exceptions during the update process
             res_data = {
                 "message": "An error occurred during updating user",
                 "error": str(e)
@@ -91,7 +111,9 @@ def userAPI(request, id=0):
     
     if request.method == 'DELETE':
         try:
-            user = Users.objects.get(pk=id)  # Use 'pk' for primary key
+            # Retrieve the user record based on the provided id
+            user = Users.objects.get(pk=id)
+            # Delete the retrieved user record
             user.delete()
             res_data = {
                 "message": "User data deleted...",
@@ -100,12 +122,12 @@ def userAPI(request, id=0):
             return JsonResponse(res_data, safe=False )
 
         except Users.DoesNotExist:
+            # Handle case where the user
             res_data = {
                 "message": f"User data not found for Id: {id} ",
                 "data": None
             }
             return JsonResponse(res_data, safe=False )
-    
 
 @csrf_exempt
 def user_role(request, id=0):
