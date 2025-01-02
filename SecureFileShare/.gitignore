@@ -1,0 +1,35 @@
+# Ignore environment files
+.env
+
+# Byte-compiled files
+*.pyc
+*.pyo
+__pycache__/
+
+# Logs
+*.log
+
+# Virtual environment
+venv/
+env/
+ENV/
+*.venv
+*.env
+
+# Django specific files
+db.sqlite3
+*.pot
+*.pyc
+.DS_Store
+.idea/
+.vscode/
+
+# Media and static files (optional, depending on your setup)
+media/
+staticfiles/
+
+# Node modules (if using any frontend libraries)
+node_modules/
+
+# Secret keys and sensitive data
+*.key

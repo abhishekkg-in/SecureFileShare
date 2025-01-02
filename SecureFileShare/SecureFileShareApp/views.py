@@ -14,10 +14,124 @@ import base64
 import bcrypt
 import json
 import os
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view
+import environ
 
 from SecureFileShareApp.models import Users, UserRole, ShareFile, SharedFileUsers, FileMetadata
 from SecureFileShareApp.serializers import UsersSerializer, UsersRoleSerializer, RolePermissionSerializer, FileMetadataSerializer, ShareFileSerializer, SharedFileUsersSerializer
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
 
+
+env = environ.Env(DEBUG=(bool, False))
+
+
+class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Grant, use this
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://localhost:3000/"
+    client_class = OAuth2Client
+
+
+
+# Login with google
+@csrf_exempt
+def login_with_google(request, id=0):
+    if request.method == 'POST':
+        json_data = JSONParser().parse(request)
+        token = json_data.get('credential')
+        # print("token -->>> ", token)  
+        if not token:
+            return JsonResponse({"error": "Token is required"}, status=400)
+
+        try:
+            # Verify the token using Google's library
+            GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
+            idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
+            # print("user info from google --->> ", idinfo)
+
+            user_data = {
+                "name": idinfo.get('name', ''),
+                "email": idinfo.get('email'),
+                "mobile": idinfo.get('mobile', ''),
+                "password": '',
+                "status": True,
+                "role_id": 1,
+                "created_at": datetime.now().isoformat(),
+                "updated_at": datetime.now().isoformat(),
+            }
+
+            print("user_data -->> ", user_data)
+
+            try:
+                user, created = Users.objects.get_or_create(email=user_data['email'], defaults=user_data)
+                # print("user --->> ", user)
+                # print("created user --->> ", created)
+
+                refresh = CustomRefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+
+                role = UserRole.objects.get(pk=user.role_id)
+
+                res_data = {
+                    "message": "Login successful.",
+                    "data": {
+                        "id": user.user_id,
+                        "name": user.name,
+                        "email": user.email,
+                        "mobile": user.mobile,
+                        "role": role.role_name,
+                        "token": access_token,
+                    }
+                }
+
+                return JsonResponse(res_data, safe=False, status=200)
+            except Exception as e:
+                return JsonResponse({"error": "Error handling user", "details": str(e)}, status=500)
+
+
+
+            # refresh = CustomRefreshToken.for_user(user_data)
+            # access_token = str(refresh.access_token)
+            # print("access token --->>>>> ", access_token)
+            # role = UserRole.objects.get(pk=user.role_id)
+
+            # Save or update the user in the database
+            # user, created = User.objects.get_or_create(username=email, defaults={
+            #     'email': email,
+            #     'first_name': first_name,
+            #     'last_name': last_name,
+            # })
+
+            # if not created:
+            #     # Update user details if already exists
+            #     user.first_name = first_name
+            #     user.last_name = last_name
+            #     user.save()
+
+            # Return a custom response
+            # response_data = {
+            #     "message": "Login successful",
+            #     "user": {
+            #         # "id": user.id,
+            #         # "username": user.username,
+            #         # "email": user.email,
+            #         # "first_name": user.first_name,
+            #         # "last_name": user.last_name,
+            #     }
+            # }
+            # return JsonResponse(response_data, status=200)
+        except ValueError as e:
+            return JsonResponse({"error": "Invalid token", "details": str(e)}, status=400)
+    
+    res_data = {
+        "message": "Invalid method",
+        "error": "INVALID METHOOD"
+    }
+    return JsonResponse(res_data, safe=False, status=400)
 
 @csrf_exempt
 def userAPI(request, id=0):

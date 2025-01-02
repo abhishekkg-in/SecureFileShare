@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { register, reset } from '../../features/auth/authSlice'
+import { register, reset, googleLogin } from '../../features/auth/authSlice'
 import { toast } from 'react-toastify'
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import Spinner from '../../components/Spinner/Spinner'
 import './Registration.css'
 
@@ -24,19 +25,11 @@ const Login = () => {
   )
 
   useEffect(() => {
-    if (isError) {
-      toast.error(`Registration Failed, ${message}`)
-    }
-
     if (isSuccess) {
       toast.success('Registration Succesfull')
-      navigate('/login')
-      // const id = localStorage.getItem('id')
-      // if (id) {
-      //   navigate(`hotels/${id}`)
-      // } else {
-      //   navigate('/')
-      // }
+      navigate('/')
+    } else if (isError) {
+      toast.error(`Registration Failed, ${message}`)
     }
 
     dispatch(reset())
@@ -80,6 +73,18 @@ const Login = () => {
   //   toast.success('Registration Succesfull')
   //   navigate('/')
   // }
+
+
+  // register with google  
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+    const handleLoginSuccess = (credentialResponse) => {
+      console.log('Google Login Success:', credentialResponse)
+      dispatch( googleLogin({credential: credentialResponse.credential}) )
+    }
+  
+    const handleLoginFailure = () => {
+      toast.error('Google Login Failed')
+    }
 
   if (isLoading) {
     return <Spinner />
@@ -135,6 +140,14 @@ const Login = () => {
 
             <button type='submit'>Submit</button>
           </form>
+          <GoogleOAuthProvider clientId={clientId}>
+            <div className='mt-3' style={{width:"max-content", margin:"0 auto"}}>
+                <GoogleLogin
+                    onSuccess={handleLoginSuccess}
+                    onError={handleLoginFailure}
+                />
+            </div>
+        </GoogleOAuthProvider>
           <div className='reg-link'>
             <span>Already registered ?</span>
             <Link to='/login'>Signin now</Link>

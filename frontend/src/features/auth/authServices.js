@@ -23,6 +23,16 @@ const login = async (userData) => {
     return response.data
 }
 
+// user login with google
+const googleLogin = async (code) => {
+    const response = await axios.post(`${API_URL}/login/google`, code)
+    
+    if(response.data){
+        localStorage.setItem('user', JSON.stringify(response.data.data))
+    }
+    return response.data
+}
+
 // user logout
 const logout =  () => {
     localStorage.removeItem('user')
@@ -40,7 +50,8 @@ const authServices = {
     register,
     login,
     logout,
-    getUsers
+    getUsers,
+    googleLogin
 }
 
 export default authServices

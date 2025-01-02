@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
-import { login, reset, logout } from '../../features/auth/authSlice'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import {
+  login,
+  reset,
+  logout,
+  googleLogin,
+} from '../../features/auth/authSlice'
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
 import { toast } from 'react-toastify'
 import { jwtDecode } from 'jwt-decode'
 import './Login.css'
@@ -10,6 +16,7 @@ import Spinner from '../../components/Spinner/Spinner'
 const Login = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
 
   const [data, setData] = useState({
     email: '',
@@ -22,44 +29,11 @@ const Login = () => {
   )
 
   useEffect(() => {
-    if (isError) {
+    if(isSuccess){
+      toast.success("Successfully login.")
+    }else if (isError) {
       toast.error(message)
     }
-
-    // if (isSuccess) {
-    //   toast.success(`${message}`)
-    //   const token = user.token
-
-    //   if (token) {
-    //     const decodedToken = jwtDecode(token)
-    //     const expiryTime = decodedToken.exp * 1000
-    //     const timeUntilExpiry = expiryTime - Date.now()
-
-    //     console.log("Token -->> ", token);
-    //     console.log('====================================');
-    //     console.log("Expiry time -->> ", expiryTime);
-    //     console.log('====================================');
-        
-
-    //     if (timeUntilExpiry > 0) {
-    //       const timeout = setTimeout(() => {
-    //         toast.info('Session expired. Please log in again.')
-    //         dispatch(logout())
-    //         dispatch(reset())
-    //         navigate('/')
-    //         }, timeUntilExpiry)
-
-    //       return () => clearTimeout(timeout)
-    //     } else {
-    //       toast.info('Session expired. Please log in again.')
-    //       dispatch(logout())
-    //       dispatch(reset())
-    //       navigate('/')
-    //     }
-    //   }
-
-      // settimeout
-    // }
 
     if (user) {
       navigate('/')
@@ -82,6 +56,18 @@ const Login = () => {
     }
     dispatch(login(userData))
   }
+
+  // Google login
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  const handleLoginSuccess = (credentialResponse) => {
+    console.log('Google Login Success:', credentialResponse)
+    dispatch( googleLogin({credential: credentialResponse.credential}) )
+  }
+
+  const handleLoginFailure = () => {
+    toast.error('Google Login Failed')
+  }
+
 
   if (isLoading) {
     return <Spinner />
@@ -113,6 +99,14 @@ const Login = () => {
             />
             <button type='submit'>Submit</button>
           </form>
+          <GoogleOAuthProvider clientId={clientId}>
+            <div className='mt-3' style={{width:"max-content", margin:"0 auto"}}>
+                <GoogleLogin
+                    onSuccess={handleLoginSuccess}
+                    onError={handleLoginFailure}
+                />
+            </div>
+        </GoogleOAuthProvider>
           <div className='reg-link'>
             <span>new user ?</span>
             <Link to='/register'>Register now</Link>

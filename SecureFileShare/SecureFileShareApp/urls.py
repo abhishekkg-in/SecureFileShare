@@ -11,6 +11,8 @@ urlpatterns = [
     
     path('users/register', views.user_register),
     path('users/login', views.user_login),
+    path('users/login/google', views.login_with_google),
+
 
     path('files', views.fileAPI),
     path('files/uploaded/<int:id>', views.get_file_meta_data_by_user),
