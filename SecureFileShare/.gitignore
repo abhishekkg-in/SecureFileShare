@@ -15,6 +15,7 @@ env/
 ENV/
 *.venv
 *.env
+uploads/
 
 # Django specific files
 db.sqlite3

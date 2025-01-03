@@ -36,7 +36,6 @@ class GoogleLogin(SocialLoginView): # if you want to use Authorization Code Gran
     client_class = OAuth2Client
 
 
-
 # Login with google
 @csrf_exempt
 def login_with_google(request, id=0):
