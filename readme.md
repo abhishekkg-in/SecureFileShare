@@ -3,7 +3,7 @@
 SecureFileShare is a secure and user-friendly file-sharing platform that ensures data integrity and privacy. This project provides encrypted file uploads, role-based access control, and seamless authentication and authorization features to protect user information and facilitate secure file sharing.
 
 ## Demo Video
-Watch the demo video to see SecureFileShare in action:  
+Watch the demo video to see SecureFileShare in action:  [Demo Video](https://drive.google.com/file/d/1lM5JFarFbUDRv-tQzHdFrtiOk_w2aHrB/view?usp=sharing)
 <video src="./SecureFileShare/demo.mp4" controls width="600"></video>
 
 ## Features
