@@ -1,13 +1,25 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { MdSearch } from 'react-icons/md'
 import FileUpload from './FileUpload'
 import './fileview.css'
 
 const FileView = () => {
+  const navigate = useNavigate()
+
   const [searchTerm, setSearchTerm] = useState('')
+
+  const { user } = useSelector(
+      (state) => state.auth
+    )
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value)
+  }
+
+  if(!user){
+    navigate("/login")
   }
 
   return (

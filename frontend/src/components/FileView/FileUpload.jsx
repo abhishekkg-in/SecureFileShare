@@ -25,6 +25,10 @@ const FileUpload = () => {
 
   const { user } = useSelector((state) => state.auth)
 
+  if(!user){
+    navigate("/login")
+  }
+
   const [uploadedFile, setUploadedFile] = useState([])
 
   const [files, setFiles] = useState([])
@@ -66,7 +70,7 @@ const FileUpload = () => {
       extension: lastDotIndex !== -1 ? fileName.slice(lastDotIndex + 1) : '',
       fileSize: file.size,
       type: file.type,
-      updatedBy: user !== null ? user.id : 1,
+      updatedBy: user.id,
     }
     formData.append('metaData', JSON.stringify(metaData))
     dispatch(uploadFile(formData))
@@ -97,12 +101,16 @@ const FileUpload = () => {
   //   dispatch(getUploadedFile(user !== null ? user.id : 1))
 
   useEffect(() => {
-    dispatch(getUploadedFile(user !== null ? user.id : 1))
+    if(!user){
+      navigate("/login")
+    }else{
+      dispatch(getUploadedFile(user.id))
+    }
   }, [dispatch])
 
   useEffect(() => {
     if (isSuccess) {
-      dispatch(getUploadedFile(user !== null ? user.id : 1))
+      dispatch(getUploadedFile(user.id))
       toast.success("File uploaded.")
     } else if (isError) {
       toast.error(`${message}`)

@@ -68,8 +68,8 @@ def login_with_google(request, id=0):
 
             try:
                 user, created = Users.objects.get_or_create(email=user_data['email'], defaults=user_data)
-                # print("user --->> ", user)
-                # print("created user --->> ", created)
+                print("user --->> ", user)
+                print("created user --->> ", created)
 
                 refresh = CustomRefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
@@ -519,7 +519,8 @@ def file_upload(request, id=0):
                 }
                 return JsonResponse(res_data, safe=False, status=500)
 
-            key = b'6v9X$2bF+P3@q!Wz'
+            key_env = env("KEY")
+            key = key_env.encode()
             # Decrypt the file using the provided key
             decrypted_data = decrypt_file(file, key)
             file_extension = meta_data['extension']
@@ -883,7 +884,8 @@ def decrypt_file(encrypted_file, key):
     encrypted_data = base64.b64decode(encrypted_data)
     
     # Ensure key and IV match frontend
-    iv = b'1234567890123456'  # Same IV as used in encryption
+    env_iv = env("IV")
+    iv = env_iv.encode()  # Same IV as used in encryption
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
 

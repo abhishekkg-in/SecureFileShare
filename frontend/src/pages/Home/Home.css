@@ -123,3 +123,17 @@
 .headerBtn:hover{
   background-color: #0b8246;
 }
+
+
+.dashboard{
+  font-family: 'cursive';
+  font-optical-sizing: auto;
+  font-weight: 1200;
+  font-style: normal;
+  /* font-weight: 1200; */
+    font-size: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
